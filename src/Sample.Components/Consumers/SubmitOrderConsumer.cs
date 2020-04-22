@@ -25,7 +25,7 @@ namespace Sample.Components.Consumers
         {
             _logger?.Log(LogLevel.Debug, "SubmitOrderConsumer: {CustomerNumber}", context.Message.CustomerNumber);
 
-            if (context.Message.CustomerNumber.Contains("TEST"))
+            //if (context.Message.CustomerNumber.Contains("TEST"))
             {
                 if (context.RequestId != null)
                     await context.RespondAsync<OrderSubmissionRejected>(new

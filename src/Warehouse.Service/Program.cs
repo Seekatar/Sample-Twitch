@@ -7,6 +7,7 @@
     using Components.Consumers;
     using Components.StateMachines;
     using MassTransit;
+    using MassTransit.ActiveMqTransport;
     using MassTransit.Definition;
     using MassTransit.MongoDbIntegration;
     using Microsoft.ApplicationInsights;
@@ -94,8 +95,14 @@
 
         static IBusControl ConfigureBus(IServiceProvider provider)
         {
-            return Bus.Factory.CreateUsingRabbitMq(cfg =>
+            return Bus.Factory.CreateUsingActiveMq(cfg =>
             {
+                var host = cfg.Host("localhost", h =>
+                {
+                    h.Username("artemis_admin");
+                    h.Password("password123");
+
+                });
                 cfg.UseMessageScheduler(new Uri("queue:quartz"));
 
                 cfg.ConfigureEndpoints(provider);

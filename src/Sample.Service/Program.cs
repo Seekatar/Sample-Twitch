@@ -10,6 +10,7 @@
     using Components.StateMachines;
     using Components.StateMachines.OrderStateMachineActivities;
     using MassTransit;
+    using MassTransit.ActiveMqTransport;
     using MassTransit.Courier.Contracts;
     using MassTransit.Definition;
     using MassTransit.MongoDbIntegration;
@@ -108,8 +109,14 @@
 
         static IBusControl ConfigureBus(IServiceProvider provider)
         {
-            return Bus.Factory.CreateUsingRabbitMq(cfg =>
+            return Bus.Factory.CreateUsingActiveMq(cfg =>
             {
+                var host = cfg.Host("localhost", h =>
+                {
+                    h.Username("artemis_admin");
+                    h.Password("password123");
+
+                });
                 cfg.UseMessageData(new MongoDbMessageDataRepository("mongodb://127.0.0.1", "attachments"));
                 cfg.UseMessageScheduler(new Uri("queue:quartz"));
 

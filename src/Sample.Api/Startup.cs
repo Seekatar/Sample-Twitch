@@ -4,6 +4,7 @@ namespace Sample.Api
     using Components.Consumers;
     using Contracts;
     using MassTransit;
+    using MassTransit.ActiveMqTransport;
     using MassTransit.Definition;
     using MassTransit.MessageData;
     using MassTransit.MongoDbIntegration.MessageData;
@@ -44,15 +45,14 @@ namespace Sample.Api
             {
                 cfg.AddBus(provider =>
                 {
-                    return Bus.Factory.CreateUsingRabbitMq(x =>
+                    return Bus.Factory.CreateUsingActiveMq(x =>
                     {
-                        MessageDataDefaults.ExtraTimeToLive = TimeSpan.FromDays(1);
-                        MessageDataDefaults.Threshold = 2000;
-                        MessageDataDefaults.AlwaysWriteToRepository = false;
+                        var host = x.Host("localhost", h =>
+                        {
+                            h.Username("artemis_admin");
+                            h.Password("password123");
 
-                        x.UseMessageData(new MongoDbMessageDataRepository("mongodb://127.0.0.1", "attachments"));
-
-                        x.UseHealthCheck(provider);
+                        });
                     });
                 });
 
